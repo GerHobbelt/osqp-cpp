@@ -94,3 +94,8 @@ if (OSQP-CPP_BUILD_TESTS)
   message(STATUS "osqp-cpp: Added osqp-cpp tests.")
 endif()
 
+install(TARGETS ${PROJECT_NAME}
+        DESTINATION lib)
+
+install(FILES include/osqp++.h
+        DESTINATION include/${PROJECT_NAME})
