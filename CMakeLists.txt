@@ -26,40 +26,9 @@ option(OSQP-CPP_BUILD_TESTS
 
 include(FetchContent)
 
-# ABSL
-if (NOT TARGET absl::strings OR NOT TARGET absl::status OR NOT TARGET absl::span)
-  message(STATUS "osqp-cpp: `absl` targets not found. Attempting to fetch contents...")
-  FetchContent_Declare(
-    abseil-cpp
-    GIT_REPOSITORY https://github.com/abseil/abseil-cpp.git
-    GIT_TAG        origin/master
-  )
-  FetchContent_MakeAvailable(abseil-cpp)
-else()
-  message(STATUS "osqp-cpp: `absl` targets found.")
-endif()
-
-# EIGEN
-# Eigen is usually available as a system package, so we use find_package.
-if (NOT TARGET Eigen3::Eigen)
-  message(STATUS "osqp-cpp: `Eigen3` targets not found. Attempting to find package...")
-  find_package(Eigen3 3.3.7 REQUIRED NO_MODULE)
-else()
-  message(STATUS "osqp-cpp: `Eigen3` targets found.")
-endif()
-
-# OSQP
-if (NOT TARGET osqpstatic)
-  message(STATUS "osqp-cpp: `osqp` targets not found. Attempting to fetch contents...")
-  FetchContent_Declare(
-    osqp
-    GIT_REPOSITORY https://github.com/oxfordcontrol/osqp.git
-    GIT_TAG        origin/master
-  )
-  FetchContent_MakeAvailable(osqp)
-else()
-  message(STATUS "osqp-cpp: `osqp` targets found.")
-endif()
+find_package(absl REQUIRED)
+find_package(Eigen3 3.3.7 REQUIRED NO_MODULE)
+find_package(osqp REQUIRED)
 
 # Googletest
 if (OSQP-CPP_BUILD_TESTS)
@@ -81,7 +50,7 @@ endif()
 
 message(STATUS "osqp-cpp: Adding osqp-cpp library...")
 add_library(osqp-cpp src/osqp++.cc)
-target_link_libraries(osqp-cpp PUBLIC absl::strings absl::status absl::statusor Eigen3::Eigen PRIVATE osqpstatic ${CMAKE_DL_LIBS})
+target_link_libraries(osqp-cpp PUBLIC absl::strings absl::status absl::statusor Eigen3::Eigen PRIVATE osqp::osqpstatic ${CMAKE_DL_LIBS})
 target_include_directories(osqp-cpp PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>")
 message(STATUS "osqp-cpp: Added osqp-cpp library.")
 
